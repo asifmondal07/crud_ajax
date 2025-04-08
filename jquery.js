@@ -2,14 +2,10 @@ $(function(){
 loadTable()
 function loadTable(){
     $.ajax({
-        url:"load.php",  // URL to fetch the table data from
-        type:"GET",  // HTTP method to use for the request
-        success:function(data) {  // Callback function for successful response
+        url:"load.php",  
+        type:"GET",  
+        success:function(data) { 
             $("#table_data").html(data)  // Display the received data in the #table element
-        },
-        error:function(xhr, status, error) {  // Callback function for error response
-            console.error("Error: " + error)  // Log the error to the console
-            $("#response").html("An error occurred while loading the table data.")  // Display an error message
         }
     })
     
@@ -48,4 +44,46 @@ function loadTable(){
 
         })
     })
+
+
+    // Delete button click event
+    $(document).on("click",".delete-btn",function(){
+        if(confirm("Do You Want To Delete This record ")){
+            var productId=$(this).data("id");
+            var element= this;
+            $.ajax({
+                url:"delete.php",
+                type:"POST",
+                data:{id:productId},
+                success:function(data){
+                    if(data==1){
+                        $(element).closest("tr").fadeOut();
+                }
+                }
+            })
+        }
+    })
+
+
+
+
+    $(document).on("click", ".edit-btn", function () {
+        var productId = $(this).data("id");
+        console.log("Edit button clicked", productId);
+    
+        $('#edit_modal').trigger("click");
+    
+        $.ajax({
+            url: "edit.php",
+            type: "POST",
+            data: { id: productId },
+            success: function (data) {
+                $("#modal_form").html(data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Edit AJAX error:", error);
+            }
+        });
+    });
+    
 })
